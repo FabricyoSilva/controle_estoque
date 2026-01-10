@@ -8,7 +8,7 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal() {
         // Configurações básicas da janela
-        setTitle("Sistema de Controle de Estoque - Vibe Coding");
+        setTitle("Sistema de Controle de Estoque");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Centraliza na tela
