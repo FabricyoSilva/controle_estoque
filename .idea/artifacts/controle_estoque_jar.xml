@@ -2,10 +2,7 @@
   <artifact type="jar" build-on-make="true" name="controle_estoque:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/controle_estoque_jar</output-path>
     <root id="archive" name="controle_estoque.jar">
-      <element id="module-output" name="controle_estoque" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/slf4j-simple-2.0.9.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/sqlite-jdbc-3.46.0.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/slf4j-api-2.0.9.jar" path-in-jar="/" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/sqlite-jdbc-3.46.0.0.jar" />
     </root>
   </artifact>
 </component>
