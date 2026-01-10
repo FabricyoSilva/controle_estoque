@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/target
+/bin
+/.settings
+.classpath
+.project
+*.class
+*.db (se usar SQLite, para não subir o banco com dados de teste)
