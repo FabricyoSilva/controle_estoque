@@ -92,19 +92,22 @@ src
 
 Tela Principal: Dashboard Financeiro e Alerta de Estoque Baixo
 
-<img width="787" height="593" alt="Captura de tela 2026-01-10 165233" src="https://github.com/user-attachments/assets/2fef8983-99a1-4793-9ff0-cc8deda16f93" />
+<img width="780" height="588" alt="Captura de tela 2026-01-10 165940" src="https://github.com/user-attachments/assets/fd13e5d1-14c9-41b7-a1ac-525795742208" />
 
 Cadastro e Gerenciamento de Categorias
 
-<img width="785" height="601" alt="Captura de tela 2026-01-10 165237" src="https://github.com/user-attachments/assets/5b98297b-b23b-4f14-a087-36b76edf69d5" />
+<img width="782" height="591" alt="Captura de tela 2026-01-10 165958" src="https://github.com/user-attachments/assets/f7f4bbd9-7b5e-42da-b551-ff8b98b23363" />
 
 Aba de Histórico de Movimentações
 
-<img width="786" height="589" alt="Captura de tela 2026-01-10 165241" src="https://github.com/user-attachments/assets/b39624c8-e2b3-4d6f-bf8f-cc6cacae32a2" />
+<img width="781" height="590" alt="Captura de tela 2026-01-10 170003" src="https://github.com/user-attachments/assets/37ab8201-314a-4b7a-8a11-40de58f58ab4" />
+
+
+---
 
 ## 📐 Diagrama de Classes (UML)
 
-<img width="1605" height="1255" alt="diagrama_estoque" src="https://github.com/user-attachments/assets/29d43dc4-6fe0-493b-9945-78f5546dd52a" />
+<img width="1605" height="1255" alt="diagrama_estoque" src="https://github.com/user-attachments/assets/2f94bd11-76d9-4aaa-a9dc-1dbf5d9ef7b2" />
 
 ---
 
