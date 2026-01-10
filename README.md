@@ -51,21 +51,30 @@ O projeto foi construído utilizando **Java (Swing)** e banco de dados embarcado
 4.  **Observer:** Comunicação reativa entre abas. Ao cadastrar uma nova Categoria, a tela de Produtos atualiza seu ComboBox automaticamente, sem reiniciar o sistema.
 
 ---
+## 🚀 Como Executar o Projeto
 
-## ⚙️ Como Executar o Projeto
+Você pode rodar o sistema de duas formas: usando o executável pronto ou abrindo o código na IDE.
 
-1.  **Pré-requisitos:** Ter o JDK (Java Development Kit) instalado.
-2.  **Bibliotecas:** O projeto utiliza o driver JDBC do SQLite e SLF4J (logs). Certifique-se de que os JARs na pasta `lib` estão no Build Path da sua IDE.
-3.  **Execução:**
-    - Localize a classe principal: `br.com.estoque.view.TelaPrincipal`.
-    - Execute o método `main`.
-    - **Nota:** Não é necessário configurar o banco de dados previamente. O sistema detecta a primeira execução e cria o arquivo `estoque.db` e todas as tabelas (`produto`, `categoria`, `historico`) automaticamente.
+### Opção 1: Usando o Executável (Artefato Executável)(Recomendado)
+A forma mais rápida de testar o sistema, sem precisar configurar IDEs.
+
+1.  **Baixe** a versão final compilada: [Download v1.0 (Executável)](https://github.com/FabricyoSilva/controle_estoque/releases/tag/v1.0)
+2.  **Extraia** todo o conteúdo do arquivo `.zip` para uma pasta no seu computador.
+3.  **Execute** o arquivo `controle_estoque.jar` (dê dois cliques).
+    * *Nota:* É necessário ter o Java (JRE/JDK) instalado no computador.
+    * *Importante:* Mantenha os arquivos `.jar` das bibliotecas na mesma pasta do executável para que ele funcione.
 
 ---
 
-## 📥 Instalação do Artefato Executável
+### Opção 2: Rodando pelo Código Fonte (Para Desenvolvedores)
+Caso queira analisar o código ou compilar manualmente.
 
-Baixe a versão final compilada aqui: [Download v1.0 (Executável)](https://github.com/FabricyoSilva/controle_estoque/releases/tag/v1.0)
+1.  **Pré-requisitos:** Ter o JDK (Java Development Kit) instalado.
+2.  **Bibliotecas:** O projeto utiliza o driver JDBC do SQLite e SLF4J. Certifique-se de adicionar os JARs da pasta `lib` ao **Build Path** da sua IDE.
+3.  **Execução:**
+    - Localize a classe principal: `br.com.estoque.view.TelaPrincipal`.
+    - Execute o método `main`.
+    - O sistema criará o banco de dados `estoque.db` automaticamente na raiz do projeto.
 
 ---
 
