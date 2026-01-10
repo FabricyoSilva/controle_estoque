@@ -15,6 +15,11 @@ public class CategoriaPanel extends JPanel {
     private JTable tabelaCategorias;
     private DefaultTableModel tableModel;
     private CategoriaDAO categoriaDAO;
+    private DataListener listener;
+
+    public void setListener(DataListener listener) {
+        this.listener = listener;
+    }
 
     public CategoriaPanel() {
         setLayout(new BorderLayout());
@@ -69,6 +74,10 @@ public class CategoriaPanel extends JPanel {
             txtNome.setText("");
             txtDescricao.setText("");
             atualizarTabela();
+            if (listener != null) {
+                listener.onDataChanged();
+                System.out.println("Avisando a TelaPrincipal que mudou!"); // Adicione isso para testar no console
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
         }
@@ -78,6 +87,7 @@ public class CategoriaPanel extends JPanel {
         int linhaSelecionada = tabelaCategorias.getSelectedRow();
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Selecione uma categoria na tabela para excluir.");
+            if (listener != null) listener.onDataChanged();
             return;
         }
 

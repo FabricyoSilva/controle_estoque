@@ -90,7 +90,7 @@ public class ProdutoPanel extends JPanel {
         atualizarTabela();
     }
 
-    private void carregarCategorias() {
+    public void carregarCategorias() {
         List<Categoria> categorias = categoriaDAO.listarTodos();
         cbCategoria.removeAllItems();
         for (Categoria c : categorias) {

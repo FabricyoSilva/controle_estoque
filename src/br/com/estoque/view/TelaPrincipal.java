@@ -14,9 +14,19 @@ public class TelaPrincipal extends JFrame {
         // Gerenciador de Abas
         JTabbedPane abas = new JTabbedPane();
 
-        // Adicionando as abas (Vamos criar esses painéis já já)
-        abas.add("Gerenciar Produtos", new ProdutoPanel());
-        abas.add("Gerenciar Categorias", new CategoriaPanel()); // Placeholder por enquanto
+// 1. Criamos os painéis
+        ProdutoPanel produtoPanel = new ProdutoPanel();
+        CategoriaPanel categoriaPanel = new CategoriaPanel();
+
+// 2. O PULO DO GATO (Observer):
+// Dizemos: "CategoriaPanel, quando seus dados mudarem, avise o ProdutoPanel para recarregar"
+        categoriaPanel.setListener(() -> {
+            produtoPanel.carregarCategorias();
+        });
+
+// 3. Adicionamos nas abas
+        abas.add("Gerenciar Produtos", produtoPanel);
+        abas.add("Gerenciar Categorias", categoriaPanel);
 
         add(abas);
     }
