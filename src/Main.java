@@ -1,25 +1,25 @@
+import br.com.estoque.dao.CategoriaDAO;
+import br.com.estoque.model.Categoria;
 import br.com.estoque.util.ConnectionFactory;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class Main {
-
     public static void main(String[] args) {
-        System.out.println("Iniciando teste de conexão...");
-
-        // 1. Tenta rodar a inicialização do banco
+        // 1. Garante que a tabela existe
         ConnectionFactory.getInstance().inicializarBanco();
 
-        // 2. Tenta pegar uma conexão para ver se não dá erro
-        try {
-            Connection con = ConnectionFactory.getInstance().getConnection();
-            if (con != null) {
-                System.out.println("Conexão obtida com sucesso!");
-                con.close(); // Fecha a conexão para não travar o arquivo
-            }
-        } catch (SQLException e) {
-            System.err.println("Erro ao conectar: " + e.getMessage());
-            e.printStackTrace();
+        // 2. Cria um objeto Categoria (Modelo)
+        Categoria novaCategoria = new Categoria("Eletrônicos", "Gadgets e dispositivos");
+
+        // 3. Instancia o DAO (Quem grava no banco)
+        CategoriaDAO dao = new CategoriaDAO();
+
+        // 4. Salva
+        dao.salvar(novaCategoria);
+
+        // 5. Lista para confirmar que salvou
+        System.out.println("\n--- Lista de Categorias no Banco ---");
+        for (Categoria c : dao.listarTodos()) {
+            System.out.println("ID: " + c.getId() + " | Nome: " + c.getNome());
         }
     }
 }
