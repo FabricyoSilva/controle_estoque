@@ -59,14 +59,24 @@ public class ConnectionFactory {
                 + "quantidade INTEGER NOT NULL, "
                 + "categoria_id INTEGER, "
                 + "FOREIGN KEY(categoria_id) REFERENCES categoria(id))";
+        // Dentro do método inicializarBanco(), adicione essa String:
+        String sqlHistorico = "CREATE TABLE IF NOT EXISTS historico ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "data_hora TEXT, "
+                + "tipo_movimento TEXT, " // Ex: "CADASTRO", "ATUALIZACAO"
+                + "produto_nome TEXT, "
+                + "quantidade INTEGER)";
 
+// E execute ela logo abaixo das outras:
         try (Connection conn = getConnection();
              PreparedStatement st1 = conn.prepareStatement(sqlCategoria);
-             PreparedStatement st2 = conn.prepareStatement(sqlProduto)) {
+             PreparedStatement st2 = conn.prepareStatement(sqlProduto);
+             PreparedStatement st3 = conn.prepareStatement(sqlHistorico)) { // NOVO
 
             st1.execute();
             st2.execute();
-            System.out.println("Banco de dados e tabelas verificados com sucesso!");
+            st3.execute(); // Executa a criação da tabela nova
+            System.out.println("Banco verificado com Histórico!");
 
         } catch (SQLException e) {
             e.printStackTrace();

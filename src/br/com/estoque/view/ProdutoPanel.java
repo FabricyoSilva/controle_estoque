@@ -1,6 +1,7 @@
 package br.com.estoque.view;
 
 import br.com.estoque.dao.CategoriaDAO;
+import br.com.estoque.dao.HistoricoDAO;
 import br.com.estoque.dao.ProdutoDAO;
 import br.com.estoque.model.Categoria;
 import br.com.estoque.model.Produto;
@@ -21,10 +22,9 @@ public class ProdutoPanel extends JPanel {
     private JComboBox<Categoria> cbCategoria; // O "Pulo do Gato" para o 1:N
     private JTable tabelaProdutos;
     private DefaultTableModel tableModel;
-
     private ProdutoDAO produtoDAO;
     private CategoriaDAO categoriaDAO;
-
+    private HistoricoDAO historicoDAO = new HistoricoDAO();
     public ProdutoPanel() {
         setLayout(new BorderLayout());
 
@@ -81,7 +81,32 @@ public class ProdutoPanel extends JPanel {
         // --- TABELA (Centro) ---
         String[] colunas = {"ID", "Nome", "Preço", "Qtd", "Categoria ID"};
         tableModel = new DefaultTableModel(colunas, 0);
+        // ... código anterior da criação da tabela ...
         tabelaProdutos = new JTable(tableModel);
+
+// --- CÓDIGO NOVO: ALERTA DE ESTOQUE ---
+        tabelaProdutos.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // Pega a quantidade da coluna 3 (Lembre-se: ID=0, Nome=1, Preco=2, Qtd=3)
+                int quantidade = Integer.parseInt(table.getModel().getValueAt(row, 3).toString());
+
+                if (quantidade < 5) {
+                    c.setBackground(new java.awt.Color(255, 100, 100)); // Vermelho Claro
+                    c.setForeground(java.awt.Color.WHITE); // Texto Branco
+                } else {
+                    // Se não for selecionado, volta pro branco padrão
+                    c.setBackground(isSelected ? table.getSelectionBackground() : java.awt.Color.WHITE);
+                    c.setForeground(isSelected ? table.getSelectionForeground() : java.awt.Color.BLACK);
+                }
+                return c;
+            }
+        });
+// ---------------------------------------
+
+// ... restante do código ...
         JScrollPane scrollPane = new JScrollPane(tabelaProdutos);
 
         add(scrollPane, BorderLayout.CENTER);
@@ -113,7 +138,8 @@ public class ProdutoPanel extends JPanel {
 
             Produto p = new Produto(nome, preco, qtd, categoriaSelecionada.getId());
             produtoDAO.salvar(p);
-
+            // Registra no histórico
+            historicoDAO.registrarMovimento("ENTRADA/CADASTRO", p.getNome(), p.getQuantidade());
             JOptionPane.showMessageDialog(this, "Produto salvo com sucesso!");
 
             // Limpar campos

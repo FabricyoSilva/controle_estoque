@@ -1,5 +1,7 @@
 package br.com.estoque.view;
 
+import br.com.estoque.util.ConnectionFactory;
+
 import javax.swing.*;
 
 public class TelaPrincipal extends JFrame {
@@ -17,6 +19,16 @@ public class TelaPrincipal extends JFrame {
 // 1. Criamos os painéis
         ProdutoPanel produtoPanel = new ProdutoPanel();
         CategoriaPanel categoriaPanel = new CategoriaPanel();
+// ...
+        HistoricoPanel historicoPanel = new HistoricoPanel();
+
+// Adiciona listener para quando mudar de aba, o histórico atualizar
+        abas.addChangeListener(e -> {
+            if (abas.getSelectedIndex() == 2) { // Se for a aba 2 (Histórico)
+                historicoPanel.carregarDados();
+            }
+        });
+
 
 // 2. O PULO DO GATO (Observer):
 // Dizemos: "CategoriaPanel, quando seus dados mudarem, avise o ProdutoPanel para recarregar"
@@ -27,18 +39,22 @@ public class TelaPrincipal extends JFrame {
 // 3. Adicionamos nas abas
         abas.add("Gerenciar Produtos", produtoPanel);
         abas.add("Gerenciar Categorias", categoriaPanel);
-
+        abas.add("Histórico", historicoPanel);
         add(abas);
     }
 
     // Método main para rodar a tela direto (substitui aquele Main.java de teste)
     public static void main(String[] args) {
-        // LookAndFeel para ficar com a cara do sistema operacional (menos feio)
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // --- ADICIONE ESTA LINHA AQUI ---
+        // Isso garante que o banco e a tabela 'historico' sejam criados antes da tela abrir
+        ConnectionFactory.getInstance().inicializarBanco();
+        // -------------------------------
 
         SwingUtilities.invokeLater(() -> {
             new TelaPrincipal().setVisible(true);
