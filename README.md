@@ -11,7 +11,6 @@ O software transcende o conceito básico de cadastro, funcionando como um **ERP 
 
 ---
 
-
 ## 🚀 Funcionalidades e Regras de Negócio (Diferenciais)
 
 O sistema foi arquitetado para resolver quatro pilares fundamentais da gestão empresarial:
@@ -61,6 +60,12 @@ O projeto foi construído utilizando **Java (Swing)** e banco de dados embarcado
     - Localize a classe principal: `br.com.estoque.view.TelaPrincipal`.
     - Execute o método `main`.
     - **Nota:** Não é necessário configurar o banco de dados previamente. O sistema detecta a primeira execução e cria o arquivo `estoque.db` e todas as tabelas (`produto`, `categoria`, `historico`) automaticamente.
+
+---
+
+## 📥 Instalação do Artefato Executável
+
+Baixe a versão final compilada aqui: [Download v1.0 (Executável)](https://github.com/FabricyoSilva/controle_estoque/releases/tag/v1.0)
 
 ---
 
