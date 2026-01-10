@@ -16,7 +16,7 @@ public class TelaPrincipal extends JFrame {
 
         // Adicionando as abas (Vamos criar esses painéis já já)
         abas.add("Gerenciar Produtos", new ProdutoPanel());
-        abas.add("Gerenciar Categorias", new JPanel()); // Placeholder por enquanto
+        abas.add("Gerenciar Categorias", new CategoriaPanel()); // Placeholder por enquanto
 
         add(abas);
     }
