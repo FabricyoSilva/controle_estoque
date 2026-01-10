@@ -1,35 +1,43 @@
-# 📦 Sistema de Gestão de Estoque com Auditoria e Dashboard Financeiro
+# 📦 Sistema Integrado de Controle de Estoque e Financeiro 
 
-Este projeto é uma aplicação Desktop robusta para controle de estoque, desenvolvida como Trabalho Final da disciplina de Programação Orientada a Objetos (POO).
+Este projeto é uma solução **Full Desktop Application**.
 
-Muito além de um CRUD trivial, o sistema implementa **regras de negócio reais**, controle financeiro, auditoria de movimentações e alertas visuais para tomada de decisão, cumprindo rigorosamente a arquitetura **MVC** e os padrões de projeto exigidos.
+O software transcende o conceito básico de cadastro, funcionando como um **ERP simplificado** que integra gestão de mercadorias, controle financeiro em tempo real, categorização dinâmica de produtos e auditoria completa de movimentações. O foco foi simular um ambiente corporativo real, com regras de negócio rígidas que garantem a integridade dos dados e do patrimônio.
 
 ---
 ## 👤 Autor
 
-[Fabricyo Silva] - Desenvolvedor Full Stack (Backend, Frontend e Banco de Dados)
+[Fabricyo Silva] - Desenvolvedor Full Stack (Backend, Frontend e Banco de Dados) - ADS2
 
 ---
 
-## 🚀 Diferenciais e Regras de Negócio
 
-O sistema resolve problemas práticos de gestão através das seguintes funcionalidades:
+## 🚀 Funcionalidades e Regras de Negócio (Diferenciais)
 
-### 1. 💰 Dashboard Financeiro (KPI)
-- **Problema:** "Quanto dinheiro a empresa tem parado no estoque?"
-- **Solução:** O sistema calcula em tempo real o patrimônio total (soma de `Preço * Quantidade` de todos os itens) e exibe em destaque no rodapé da aplicação.
+O sistema foi arquitetado para resolver quatro pilares fundamentais da gestão empresarial:
 
-### 2. 📦 Fluxo de Movimentação com Validação
-- **Problema:** Em sistemas triviais, o usuário apaga um número e digita outro, gerando erros e furos de estoque.
-- **Solução:** A edição direta é bloqueada na tabela. O usuário deve realizar operações de **"Entrada"** ou **"Saída"**.
-- **Regra de Negócio:** O sistema impede que o estoque fique negativo (não é possível realizar uma saída maior que o saldo atual).
+### 1. 📊 Gestão Financeira Integrada (KPIs)
 
-### 3. 📝 Auditoria e Rastreabilidade (Histórico)
-- **Problema:** Necessidade de saber quem alterou o estoque, quando e por quê.
-- **Solução:** Toda operação de cadastro, entrada ou saída gera automaticamente um registro indelével na aba "Histórico", contendo data, hora, tipo de movimento e o produto afetado.
+- **Funcionalidade:** Cálculo automático e em tempo real do valor total imobilizado em estoque (Preço x Quantidade).
+- **Impacto:** Permite ao gestor saber instantaneamente quanto capital está investido em mercadorias, auxiliando na tomada de decisão financeira.
 
-### 4. 🚨 Gestão Visual de Risco
-- **Solução:** Produtos com estoque crítico (abaixo de 5 unidades) são destacados automaticamente em **vermelho** na tabela, facilitando a identificação de itens que precisam de reposição.
+### 2. 🗂️ Gestão Dinâmica de Categorias
+O sistema implementa um relacionamento **1:N (Um-para-Muitos)** flexível e reativo.
+- **Funcionalidade:** O usuário pode criar novas categorias (ex: "Eletrônicos", "Perecíveis") a qualquer momento.
+- **Reatividade (Observer):** Ao cadastrar uma nova categoria, todas as interfaces de cadastro de produtos são atualizadas instantaneamente para exibir a nova opção, sem necessidade de reiniciar o sistema.
+
+### 3. ⚖️ Controle de Fluxo (Entrada/Saída) com Travas de Segurança
+Implementação de regras de negócio para evitar erros operacionais comuns.
+- **Regra de Negócio:** O sistema bloqueia a edição manual arbitrária de quantidades. O usuário é forçado a realizar operações formais de **"Compra/Entrada"** ou **"Venda/Saída"**.
+- **Validação de Saldo:** É matematicamente impossível realizar uma saída superior ao saldo atual (Estoque Negativo Bloqueado), garantindo consistência contábil.
+
+### 4. 📝 Auditoria e Rastreabilidade (Histórico de Movimentações)
+Segurança e transparência para o negócio.
+- **Funcionalidade:** Cada operação realizada no sistema (desde o cadastro inicial até pequenos ajustes de estoque) gera um registro imutável (Log).
+- **Detalhes:** O histórico grava a data exata, o tipo de operação, o produto afetado e a quantidade movimentada, permitindo rastrear "quem fez o quê".
+
+### 5. 🚨 Gestão Visual de Risco
+- **Funcionalidade:** Produtos com estoque crítico (abaixo de 5 unidades) são destacados visualmente em **vermelho** na listagem, servindo como um alerta passivo para reposição imediata.
 
 ---
 
