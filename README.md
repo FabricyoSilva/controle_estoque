@@ -5,7 +5,8 @@ Este projeto é uma aplicação Desktop robusta para controle de estoque, desenv
 Muito além de um CRUD trivial, o sistema implementa **regras de negócio reais**, controle financeiro, auditoria de movimentações e alertas visuais para tomada de decisão, cumprindo rigorosamente a arquitetura **MVC** e os padrões de projeto exigidos.
 
 ---
-👤 Autor
+## 👤 Autor
+
 [Fabricyo Silva] - Desenvolvedor Full Stack (Backend, Frontend e Banco de Dados)
 
 ---
@@ -86,7 +87,22 @@ src
                 └── DataListener.java       # Interface Observer
 ```
 ---
-📐 Diagrama de Classes (UML)
+
+## 📸 Screenshots
+
+Tela Principal: Dashboard Financeiro e Alerta de Estoque Baixo
+
+<img width="787" height="593" alt="Captura de tela 2026-01-10 165233" src="https://github.com/user-attachments/assets/2fef8983-99a1-4793-9ff0-cc8deda16f93" />
+
+Cadastro e Gerenciamento de Categorias
+
+<img width="785" height="601" alt="Captura de tela 2026-01-10 165237" src="https://github.com/user-attachments/assets/5b98297b-b23b-4f14-a087-36b76edf69d5" />
+
+Aba de Histórico de Movimentações
+
+<img width="786" height="589" alt="Captura de tela 2026-01-10 165241" src="https://github.com/user-attachments/assets/b39624c8-e2b3-4d6f-bf8f-cc6cacae32a2" />
+
+## 📐 Diagrama de Classes (UML)
 
 <img width="1605" height="1255" alt="diagrama_estoque" src="https://github.com/user-attachments/assets/29d43dc4-6fe0-493b-9945-78f5546dd52a" />
 
