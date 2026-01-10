@@ -5,6 +5,10 @@ Este projeto é uma aplicação Desktop robusta para controle de estoque, desenv
 Muito além de um CRUD trivial, o sistema implementa **regras de negócio reais**, controle financeiro, auditoria de movimentações e alertas visuais para tomada de decisão, cumprindo rigorosamente a arquitetura **MVC** e os padrões de projeto exigidos.
 
 ---
+👤 Autor
+[Fabricyo Silva] - Desenvolvedor Full Stack (Backend, Frontend e Banco de Dados)
+
+---
 
 ## 🚀 Diferenciais e Regras de Negócio
 
@@ -80,3 +84,11 @@ src
             └── 📦 util        # Utilitários e Infraestrutura
                 ├── ConnectionFactory.java  # Singleton de Conexão
                 └── DataListener.java       # Interface Observer
+```
+---
+📐 Diagrama de Classes (UML)
+
+<img width="1605" height="1255" alt="diagrama_estoque" src="https://github.com/user-attachments/assets/29d43dc4-6fe0-493b-9945-78f5546dd52a" />
+
+---
+
