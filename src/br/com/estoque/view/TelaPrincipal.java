@@ -30,7 +30,7 @@ public class TelaPrincipal extends JFrame {
         });
 
 
-// 2. O PULO DO GATO (Observer):
+// 2. (Observer):
 // Dizemos: "CategoriaPanel, quando seus dados mudarem, avise o ProdutoPanel para recarregar"
         categoriaPanel.setListener(() -> {
             produtoPanel.carregarCategorias();
@@ -51,7 +51,6 @@ public class TelaPrincipal extends JFrame {
             e.printStackTrace();
         }
 
-        // --- ADICIONE ESTA LINHA AQUI ---
         // Isso garante que o banco e a tabela 'historico' sejam criados antes da tela abrir
         ConnectionFactory.getInstance().inicializarBanco();
         // -------------------------------

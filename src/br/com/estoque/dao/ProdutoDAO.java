@@ -32,6 +32,20 @@ public class ProdutoDAO implements GenericDAO<Produto> {
             throw new RuntimeException("Erro ao salvar produto: " + e.getMessage());
         }
     }
+    public double calcularValorTotalEstoque() {
+        String sql = "SELECT SUM(preco * quantidade) AS total FROM produto";
+        try (Connection conn = ConnectionFactory.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
 
     @Override
     public void atualizar(Produto produto) {
