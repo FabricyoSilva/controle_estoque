@@ -7,7 +7,7 @@ O software transcende o conceito básico de cadastro, funcionando como um **ERP 
 ---
 ## 👤 Autor
 
-[Fabricyo Silva] - Desenvolvedor Full Stack (Backend, Frontend e Banco de Dados) - ADS2
+[Fabricyo Silva Veras dos Santos] - ADS2
 
 ---
 
