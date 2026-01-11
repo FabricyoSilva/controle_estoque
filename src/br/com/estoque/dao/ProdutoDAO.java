@@ -3,89 +3,61 @@ package br.com.estoque.dao;
 import br.com.estoque.model.Produto;
 import br.com.estoque.util.ConnectionFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProdutoDAO implements GenericDAO<Produto> {
+public class ProdutoDAO {
 
-    @Override
-    public void salvar(Produto produto) {
-        // Atenção aqui: o SQL inclui o categoria_id para fazer o vínculo
+    // 1. INSERT (CORRIGIDO: Agora pega o ID gerado pelo banco)
+    public void insert(Produto p) {
         String sql = "INSERT INTO produto (nome, preco, quantidade, categoria_id) VALUES (?, ?, ?, ?)";
 
+        // Adicionamos 'Statement.RETURN_GENERATED_KEYS' para pedir o ID de volta
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, produto.getNome());
-            stmt.setDouble(2, produto.getPreco());
-            stmt.setInt(3, produto.getQuantidade());
-            stmt.setInt(4, produto.getCategoriaId()); // Aqui vai o ID da categoria pai
+            stmt.setString(1, p.getName());
+            stmt.setDouble(2, p.getPrice());
+            stmt.setInt(3, p.getQuantity());
+            stmt.setInt(4, p.getCategoryId());
 
-            stmt.executeUpdate();
-            System.out.println("Produto salvo com sucesso!");
+            int linhasAfetadas = stmt.executeUpdate();
 
+            // Se salvou com sucesso, pegamos o ID novo
+            if (linhasAfetadas > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int idGerado = generatedKeys.getInt(1);
+                        p.setId(idGerado); // Atualiza o objeto com o ID real!
+                    }
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao salvar produto: " + e.getMessage());
         }
     }
-    public double calcularValorTotalEstoque() {
-        String sql = "SELECT SUM(preco * quantidade) AS total FROM produto";
-        try (Connection conn = ConnectionFactory.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                return rs.getDouble("total");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0.0;
-    }
-
-    @Override
-    public void atualizar(Produto produto) {
-        String sql = "UPDATE produto SET nome = ?, preco = ?, quantidade = ?, categoria_id = ? WHERE id = ?";
-
+    // 2. UPDATE (Atualizar)
+    public void update(Produto p) {
+        String sql = "UPDATE produto SET nome=?, preco=?, quantidade=?, categoria_id=? WHERE id=?";
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, produto.getNome());
-            stmt.setDouble(2, produto.getPreco());
-            stmt.setInt(3, produto.getQuantidade());
-            stmt.setInt(4, produto.getCategoriaId());
-            stmt.setInt(5, produto.getId());
+            stmt.setString(1, p.getName());
+            stmt.setDouble(2, p.getPrice());
+            stmt.setInt(3, p.getQuantity());
+            stmt.setInt(4, p.getCategoryId());
+            stmt.setInt(5, p.getId());
 
             stmt.executeUpdate();
-            System.out.println("Produto atualizado com sucesso!");
-
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao atualizar produto: " + e.getMessage());
         }
     }
 
-    @Override
-    public void deletar(int id) {
-        String sql = "DELETE FROM produto WHERE id = ?";
-
-        try (Connection conn = ConnectionFactory.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-            System.out.println("Produto excluído com sucesso!");
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao deletar produto: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public List<Produto> listarTodos() {
+    // 3. FIND ALL (Listar Todos)
+    public List<Produto> findAll() {
         String sql = "SELECT * FROM produto";
         List<Produto> produtos = new ArrayList<>();
 
@@ -96,42 +68,27 @@ public class ProdutoDAO implements GenericDAO<Produto> {
             while (rs.next()) {
                 Produto p = new Produto();
                 p.setId(rs.getInt("id"));
-                p.setNome(rs.getString("nome"));
-                p.setPreco(rs.getDouble("preco"));
-                p.setQuantidade(rs.getInt("quantidade"));
-                p.setCategoriaId(rs.getInt("categoria_id")); // Recupera o vínculo
+                p.setName(rs.getString("nome"));
+                p.setPrice(rs.getDouble("preco"));
+                p.setQuantity(rs.getInt("quantidade"));
+                p.setCategoryId(rs.getInt("categoria_id"));
                 produtos.add(p);
             }
-
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
         }
         return produtos;
     }
 
-    @Override
-    public Produto buscarPorId(int id) {
-        String sql = "SELECT * FROM produto WHERE id = ?";
-        Produto produto = null;
-
+    // 4. DELETE (Excluir)
+    public void delete(int id) {
+        String sql = "DELETE FROM produto WHERE id = ?";
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                produto = new Produto();
-                produto.setId(rs.getInt("id"));
-                produto.setNome(rs.getString("nome"));
-                produto.setPreco(rs.getDouble("preco"));
-                produto.setQuantidade(rs.getInt("quantidade"));
-                produto.setCategoriaId(rs.getInt("categoria_id"));
-            }
-
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar produto por ID: " + e.getMessage());
+            throw new RuntimeException("Erro ao excluir produto: " + e.getMessage());
         }
-        return produto;
     }
 }

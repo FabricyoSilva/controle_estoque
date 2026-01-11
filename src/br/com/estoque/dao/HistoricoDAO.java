@@ -1,10 +1,8 @@
 package br.com.estoque.dao;
 
+import br.com.estoque.model.Produto;
 import br.com.estoque.util.ConnectionFactory;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -12,29 +10,30 @@ import java.util.List;
 
 public class HistoricoDAO {
 
-    public void registrarMovimento(String tipo, String produto, int qtd) {
-        String sql = "INSERT INTO historico (data_hora, tipo_movimento, produto_nome, quantidade) VALUES (?, ?, ?, ?)";
-
-        // Pega data e hora atual formatada
-        String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+    public void add(Produto p, String tipo, int quantidade) {
+        String sql = "INSERT INTO historico (produto_id, tipo_movimentacao, quantidade, data_hora) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, dataHora);
+            stmt.setInt(1, p.getId());
             stmt.setString(2, tipo);
-            stmt.setString(3, produto);
-            stmt.setInt(4, qtd);
-            stmt.executeUpdate();
+            stmt.setInt(3, quantidade);
+            stmt.setString(4, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace(); // Log silencioso para não travar o sistema principal
+            System.err.println("Erro ao salvar histórico: " + e.getMessage());
         }
     }
 
+    // O Painel procura por ESTE nome exato:
     public List<String[]> listarUltimosMovimentos() {
-        String sql = "SELECT * FROM historico ORDER BY id DESC"; // Do mais recente pro mais antigo
         List<String[]> lista = new ArrayList<>();
+        String sql = "SELECT h.id, p.nome, h.tipo_movimentacao, h.quantidade, h.data_hora " +
+                "FROM historico h " +
+                "LEFT JOIN produto p ON h.produto_id = p.id " +
+                "ORDER BY h.id DESC"; // Mostra os mais recentes primeiro
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -42,10 +41,10 @@ public class HistoricoDAO {
 
             while (rs.next()) {
                 lista.add(new String[]{
-                        rs.getString("data_hora"),
-                        rs.getString("tipo_movimento"),
-                        rs.getString("produto_nome"),
-                        String.valueOf(rs.getInt("quantidade"))
+                        rs.getString("data_hora"),        // Coluna 1: Data
+                        rs.getString("tipo_movimentacao"),// Coluna 2: Tipo
+                        rs.getString("nome"),             // Coluna 3: Produto
+                        String.valueOf(rs.getInt("quantidade")) // Coluna 4: Qtd
                 });
             }
         } catch (SQLException e) {

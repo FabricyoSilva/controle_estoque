@@ -6,6 +6,8 @@ import br.com.estoque.model.Categoria;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class CategoriaPanel extends JPanel {
@@ -14,16 +16,16 @@ public class CategoriaPanel extends JPanel {
     private JTextField txtDescricao;
     private JTable tabelaCategorias;
     private DefaultTableModel tableModel;
-    private CategoriaDAO categoriaDAO;
-    private DataListener listener;
 
-    public void setListener(DataListener listener) {
+    // Usamos Runnable para ser compatível com a TelaPrincipal
+    private Runnable listener;
+
+    public void setListener(Runnable listener) {
         this.listener = listener;
     }
 
     public CategoriaPanel() {
         setLayout(new BorderLayout());
-        categoriaDAO = new CategoriaDAO();
 
         // --- FORMULÁRIO (Topo) ---
         JPanel formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
@@ -38,12 +40,19 @@ public class CategoriaPanel extends JPanel {
         formPanel.add(txtDescricao);
 
         JButton btnSalvar = new JButton("Salvar Categoria");
-        btnSalvar.addActionListener(e -> salvarCategoria());
 
-        // Adicionando botão de Excluir para cumprir o requisito de CRUD Completo
+        // --- BOTÃO EXCLUIR (Estilo Vermelho) ---
         JButton btnExcluir = new JButton("Excluir Selecionada");
-        btnExcluir.setBackground(new Color(255, 100, 100)); // Vermelho claro
+        btnExcluir.setBackground(new Color(220, 53, 69));
         btnExcluir.setForeground(Color.WHITE);
+        btnExcluir.setFont(new Font("Arial", Font.BOLD, 12));
+        btnExcluir.setFocusPainted(false);
+        btnExcluir.setBorderPainted(false);
+        btnExcluir.setOpaque(true);
+        // ---------------------------------------
+
+        // Ações dos botões
+        btnSalvar.addActionListener(e -> salvarCategoria());
         btnExcluir.addActionListener(e -> excluirCategoria());
 
         formPanel.add(btnExcluir);
@@ -52,11 +61,27 @@ public class CategoriaPanel extends JPanel {
         add(formPanel, BorderLayout.NORTH);
 
         // --- TABELA (Centro) ---
-        String[] colunas = {"ID", "Nome", "Descrição"};
-        tableModel = new DefaultTableModel(colunas, 0);
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Descrição"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tabelaCategorias = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tabelaCategorias);
         add(scrollPane, BorderLayout.CENTER);
+
+        // Clique na tabela para preencher os campos
+        tabelaCategorias.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tabelaCategorias.getSelectedRow();
+                if (row != -1) {
+                    txtNome.setText(tabelaCategorias.getValueAt(row, 1).toString());
+                    txtDescricao.setText(tabelaCategorias.getValueAt(row, 2).toString());
+                }
+            }
+        });
 
         atualizarTabela();
     }
@@ -67,16 +92,23 @@ public class CategoriaPanel extends JPanel {
             return;
         }
 
-        Categoria c = new Categoria(txtNome.getText(), txtDescricao.getText());
+        // CORREÇÃO: Usando construtor vazio e setters (Corrigindo o erro da linha 70)
+        Categoria c = new Categoria();
+        c.setName(txtNome.getText());
+        c.setDescription(txtDescricao.getText());
+
         try {
-            categoriaDAO.salvar(c);
+            // CORREÇÃO: Usando 'insert' (Corrigindo o erro da linha 72)
+            new CategoriaDAO().insert(c);
+
             JOptionPane.showMessageDialog(this, "Categoria salva!");
             txtNome.setText("");
             txtDescricao.setText("");
             atualizarTabela();
+
+            // Avisa a TelaPrincipal
             if (listener != null) {
-                listener.onDataChanged();
-                System.out.println("Avisando a TelaPrincipal que mudou!"); // Adicione isso para testar no console
+                listener.run();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
@@ -87,32 +119,39 @@ public class CategoriaPanel extends JPanel {
         int linhaSelecionada = tabelaCategorias.getSelectedRow();
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Selecione uma categoria na tabela para excluir.");
-            if (listener != null) listener.onDataChanged();
             return;
         }
 
-        // Pega o ID da coluna 0 da linha selecionada
         int id = (int) tabelaCategorias.getValueAt(linhaSelecionada, 0);
 
-        // Pergunta de confirmação (Interface amigável)
-        int resposta = JOptionPane.showConfirmDialog(this, "Tem certeza? Isso pode apagar produtos vinculados!", "Confirmação", JOptionPane.YES_NO_OPTION);
+        int resposta = JOptionPane.showConfirmDialog(this,
+                "Tem certeza? Se houver produtos nesta categoria, a exclusão falhará.",
+                "Confirmação", JOptionPane.YES_NO_OPTION);
 
         if (resposta == JOptionPane.YES_OPTION) {
             try {
-                categoriaDAO.deletar(id);
+                // CORREÇÃO: Usando 'delete'
+                new CategoriaDAO().delete(id);
+
                 atualizarTabela();
                 JOptionPane.showMessageDialog(this, "Categoria excluída.");
+
+                if (listener != null) listener.run();
+
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir (verifique se há produtos vinculados): " + e.getMessage());
+                JOptionPane.showMessageDialog(this,
+                        "Não foi possível excluir. Verifique se existem produtos vinculados a esta categoria.",
+                        "Erro de Integridade", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
     private void atualizarTabela() {
         tableModel.setRowCount(0);
-        List<Categoria> lista = categoriaDAO.listarTodos();
+        // CORREÇÃO: Usando 'findAll', 'getName' e 'getDescription'
+        List<Categoria> lista = new CategoriaDAO().findAll();
         for (Categoria c : lista) {
-            tableModel.addRow(new Object[]{c.getId(), c.getNome(), c.getDescricao()});
+            tableModel.addRow(new Object[]{c.getId(), c.getName(), c.getDescription()});
         }
     }
 }

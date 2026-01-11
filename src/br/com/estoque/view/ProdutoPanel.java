@@ -1,312 +1,249 @@
 package br.com.estoque.view;
 
-import br.com.estoque.dao.CategoriaDAO;
 import br.com.estoque.dao.HistoricoDAO;
 import br.com.estoque.dao.ProdutoDAO;
+import br.com.estoque.dao.CategoriaDAO;
 import br.com.estoque.model.Categoria;
 import br.com.estoque.model.Produto;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ProdutoPanel extends JPanel {
 
-    // Componentes da tela
     private JTextField txtNome;
     private JTextField txtPreco;
-    private JTextField txtQuantidade;
-    private JComboBox<Categoria> cbCategoria;
-    private JTable tabelaProdutos;
+    private JTextField txtQtdInicial;
+    private JComboBox<Categoria> comboCategoria;
+    private JTable tabela;
     private DefaultTableModel tableModel;
-    private JLabel lblValorTotal; // Label do Dashboard Financeiro
 
-    // DAOs
     private ProdutoDAO produtoDAO;
     private CategoriaDAO categoriaDAO;
     private HistoricoDAO historicoDAO;
 
     public ProdutoPanel() {
         setLayout(new BorderLayout());
-
         produtoDAO = new ProdutoDAO();
         categoriaDAO = new CategoriaDAO();
         historicoDAO = new HistoricoDAO();
 
-        // --- PAINEL DE FORMULÁRIO (Topo) ---
-        JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // --- 1. FORMULÁRIO (Topo) ---
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Novo Produto"));
 
         txtNome = new JTextField();
         txtPreco = new JTextField();
-        cbCategoria = new JComboBox<>();
-
-        // Configuração do campo de Quantidade (LIVRE PARA DIGITAÇÃO)
-        txtQuantidade = new JTextField();
-        txtQuantidade.setText("0");
-        txtQuantidade.setHorizontalAlignment(JTextField.CENTER);
-        // NOTA: A linha setEditable(false) foi removida para permitir digitação livre!
-
-        // Painelzinho para agrupar o campo de texto e os botões de + e -
-        JPanel panelQtd = new JPanel(new BorderLayout(5, 0));
-        JPanel panelBotoes = new JPanel(new GridLayout(1, 2, 2, 0));
-
-        JButton btnEntrada = new JButton("+");
-        btnEntrada.setBackground(new Color(150, 255, 150)); // Verde claro
-        btnEntrada.setToolTipText("Adicionar Estoque");
-
-        JButton btnSaida = new JButton("-");
-        btnSaida.setBackground(new Color(255, 150, 150)); // Vermelho claro
-        btnSaida.setToolTipText("Remover Estoque");
-
-        // --- LÓGICA HÍBRIDA DOS BOTÕES ---
-        btnEntrada.addActionListener(e -> {
-            if (tabelaProdutos.getSelectedRow() != -1) {
-                // Cenário 1: Linha selecionada -> Atualiza Banco (Entrada de Nota Fiscal, etc)
-                atualizarEstoque("ENTRADA");
-            } else {
-                // Cenário 2: Cadastro Novo -> Soma no campo de texto para facilitar
-                try {
-                    int qtd = txtQuantidade.getText().isEmpty() ? 0 : Integer.parseInt(txtQuantidade.getText());
-                    txtQuantidade.setText(String.valueOf(qtd + 1));
-                } catch (NumberFormatException ex) {
-                    txtQuantidade.setText("1");
-                }
-            }
-        });
-
-        btnSaida.addActionListener(e -> {
-            if (tabelaProdutos.getSelectedRow() != -1) {
-                // Cenário 1: Linha selecionada -> Atualiza Banco (Venda/Saída)
-                atualizarEstoque("SAIDA");
-            } else {
-                // Cenário 2: Cadastro Novo -> Subtrai no campo de texto
-                try {
-                    int qtd = txtQuantidade.getText().isEmpty() ? 0 : Integer.parseInt(txtQuantidade.getText());
-                    if (qtd > 0) txtQuantidade.setText(String.valueOf(qtd - 1));
-                } catch (NumberFormatException ex) {
-                    txtQuantidade.setText("0");
-                }
-            }
-        });
-
-        panelBotoes.add(btnEntrada);
-        panelBotoes.add(btnSaida);
-
-        panelQtd.add(txtQuantidade, BorderLayout.CENTER);
-        panelQtd.add(panelBotoes, BorderLayout.EAST);
-
-        // Validação: Impedir letras no Preço
-        txtPreco.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                String caracteres = "0987654321.";
-                if (!caracteres.contains(e.getKeyChar() + "")) {
-                    e.consume();
-                }
-            }
-        });
-
-        // Validação: Impedir letras na Quantidade (caso digite manualmente)
-        txtQuantidade.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                String caracteres = "0987654321";
-                if (!caracteres.contains(e.getKeyChar() + "")) {
-                    e.consume();
-                }
-            }
-        });
-
-        carregarCategorias();
-
-        // Adicionando componentes ao Grid
-        formPanel.add(new JLabel("Nome do Produto:"));
-        formPanel.add(txtNome);
-
-        formPanel.add(new JLabel("Preço (R$):"));
-        formPanel.add(txtPreco);
-
-        formPanel.add(new JLabel("Estoque (Digite ou use +/-):"));
-        formPanel.add(panelQtd); // Adiciona o painel composto aqui
-
-        formPanel.add(new JLabel("Categoria:"));
-        formPanel.add(cbCategoria);
+        txtQtdInicial = new JTextField();
+        comboCategoria = new JComboBox<>();
 
         JButton btnSalvar = new JButton("Salvar Novo Produto");
-        btnSalvar.addActionListener(e -> salvarProduto());
-        formPanel.add(new JLabel(""));
-        formPanel.add(btnSalvar);
 
-        add(formPanel, BorderLayout.NORTH);
+        // --- CORREÇÃO VISUAL BOTÃO SALVAR ---
+        btnSalvar.setBackground(new Color(40, 167, 69)); // Verde
+        btnSalvar.setForeground(Color.WHITE);            // Texto Branco
+        btnSalvar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnSalvar.setOpaque(true);           // <--- OBRIGATÓRIO NO LINUX
+        btnSalvar.setBorderPainted(false);   // <--- OBRIGATÓRIO NO LINUX
+        btnSalvar.setFocusPainted(false);    // Remove linha pontilhada ao clicar
+        // ------------------------------------
 
-        // --- TABELA (Centro) ---
-        String[] colunas = {"ID", "Nome", "Preço", "Qtd", "Categoria ID"};
-        tableModel = new DefaultTableModel(colunas, 0) {
+        formPanel.add(new JLabel("Nome:"));
+        formPanel.add(txtNome);
+        formPanel.add(new JLabel("Preço (R$):"));
+        formPanel.add(txtPreco);
+        formPanel.add(new JLabel("Qtd. Inicial:"));
+        formPanel.add(txtQtdInicial);
+        formPanel.add(new JLabel("Categoria:"));
+        formPanel.add(comboCategoria);
+
+        JPanel topoContainer = new JPanel(new BorderLayout());
+        topoContainer.add(formPanel, BorderLayout.CENTER);
+        topoContainer.add(btnSalvar, BorderLayout.SOUTH);
+
+        add(topoContainer, BorderLayout.NORTH);
+
+        // --- 2. TABELA (Centro) ---
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Preço", "Qtd", "Categoria"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Bloqueia edição direta na tabela
+                return false;
             }
         };
+        tabela = new JTable(tableModel);
+        add(new JScrollPane(tabela), BorderLayout.CENTER);
 
-        tabelaProdutos = new JTable(tableModel);
+        // --- 3. PAINEL DE MOVIMENTAÇÃO (Rodapé) ---
+        JPanel panelMovimentacao = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panelMovimentacao.setBorder(BorderFactory.createTitledBorder("Gerenciar Estoque (Selecione um produto)"));
 
-        // Listener para mudar o comportamento dos botões quando clica na tabela
-        tabelaProdutos.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                boolean linhaSelecionada = tabelaProdutos.getSelectedRow() != -1;
-                if (linhaSelecionada) {
-                    btnEntrada.setToolTipText("Adicionar ao Estoque do item selecionado");
-                    btnSaida.setToolTipText("Vender item selecionado");
-                } else {
-                    btnEntrada.setToolTipText("Aumentar quantidade do cadastro");
-                    btnSaida.setToolTipText("Diminuir quantidade do cadastro");
-                }
-            }
-        });
+        JButton btnEntrada = new JButton(" (+) Entrada Estoque ");
+        JButton btnSaida = new JButton(" (-) Saída Estoque ");
 
-        // ALERTA DE ESTOQUE BAIXO (Vermelho se < 5)
-        tabelaProdutos.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        // --- CORREÇÃO VISUAL BOTÕES RODAPÉ ---
 
-                // Pega a quantidade da coluna 3
-                int quantidade = Integer.parseInt(table.getModel().getValueAt(row, 3).toString());
+        // Botão Entrada (Verde Escuro)
+        btnEntrada.setBackground(new Color(25, 135, 84));
+        btnEntrada.setForeground(Color.WHITE);
+        btnEntrada.setFont(new Font("Arial", Font.BOLD, 14));
+        btnEntrada.setOpaque(true);          // <--- IMPORTANTE
+        btnEntrada.setBorderPainted(false);  // <--- IMPORTANTE
+        btnEntrada.setFocusPainted(false);
 
-                if (quantidade < 5) {
-                    c.setBackground(new Color(255, 180, 180)); // Vermelho Suave
-                    c.setForeground(Color.BLACK);
-                } else {
-                    c.setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
-                    c.setForeground(isSelected ? table.getSelectionForeground() : Color.BLACK);
-                }
-                return c;
-            }
-        });
+        // Botão Saída (Vermelho Escuro)
+        btnSaida.setBackground(new Color(220, 53, 69));
+        btnSaida.setForeground(Color.WHITE);
+        btnSaida.setFont(new Font("Arial", Font.BOLD, 14));
+        btnSaida.setOpaque(true);            // <--- IMPORTANTE
+        btnSaida.setBorderPainted(false);    // <--- IMPORTANTE
+        btnSaida.setFocusPainted(false);
+        // -------------------------------------
 
-        JScrollPane scrollPane = new JScrollPane(tabelaProdutos);
-        add(scrollPane, BorderLayout.CENTER);
+        panelMovimentacao.add(btnEntrada);
+        panelMovimentacao.add(btnSaida);
 
-        // --- DASHBOARD FINANCEIRO (Rodapé) ---
-        JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        statsPanel.setBackground(new Color(230, 240, 255));
-        statsPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
+        add(panelMovimentacao, BorderLayout.SOUTH);
 
-        lblValorTotal = new JLabel("Carregando...");
-        lblValorTotal.setFont(new Font("Arial", Font.BOLD, 14));
-        lblValorTotal.setForeground(new Color(0, 100, 0));
-
-        statsPanel.add(lblValorTotal);
-        add(statsPanel, BorderLayout.SOUTH);
-
-        // Carregar dados iniciais
+        // --- AÇÕES ---
+        carregarCategorias();
         atualizarTabela();
+
+        btnSalvar.addActionListener(e -> salvarProduto());
+        btnEntrada.addActionListener(e -> realizarMovimentacao("ENTRADA"));
+        btnSaida.addActionListener(e -> realizarMovimentacao("SAIDA"));
+
+        tabela.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tabela.getSelectedRow();
+                if (row != -1) {
+                    // Limpa o form de cadastro para evitar confusão
+                    txtNome.setText("");
+                    txtPreco.setText("");
+                    txtQtdInicial.setText("");
+                }
+            }
+        });
     }
 
-    public void carregarCategorias() {
-        List<Categoria> categorias = categoriaDAO.listarTodos();
-        cbCategoria.removeAllItems();
-        for (Categoria c : categorias) {
-            cbCategoria.addItem(c);
-        }
-    }
-
-    private void salvarProduto() {
-        if (txtNome.getText().isEmpty() || txtPreco.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha nome e preço!", "Erro", JOptionPane.ERROR_MESSAGE);
+    private void realizarMovimentacao(String tipo) {
+        int linha = tabela.getSelectedRow();
+        if (linha == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um produto na tabela primeiro!");
             return;
         }
 
-        try {
-            String nome = txtNome.getText();
-            double preco = Double.parseDouble(txtPreco.getText());
+        int idProduto = (int) tabela.getValueAt(linha, 0);
+        String nomeProduto = (String) tabela.getValueAt(linha, 1);
+        int qtdAtual = (int) tabela.getValueAt(linha, 3);
 
-            // Pega o valor digitado ou ajustado pelos botões
-            int qtd = txtQuantidade.getText().isEmpty() ? 0 : Integer.parseInt(txtQuantidade.getText());
+        String mensagem = (tipo.equals("ENTRADA")) ? "Quanto vai ENTRAR de " + nomeProduto + "?" : "Quanto vai SAIR de " + nomeProduto + "?";
+        String input = JOptionPane.showInputDialog(this, mensagem);
 
-            Categoria categoriaSelecionada = (Categoria) cbCategoria.getSelectedItem();
-
-            Produto p = new Produto(nome, preco, qtd, categoriaSelecionada.getId());
-            produtoDAO.salvar(p);
-
-            // Registra histórico inicial
-            historicoDAO.registrarMovimento("CADASTRO INICIAL", p.getNome(), qtd);
-
-            JOptionPane.showMessageDialog(this, "Produto salvo com sucesso!");
-
-            // Limpa os campos
-            txtNome.setText("");
-            txtPreco.setText("");
-            txtQuantidade.setText("0");
-
-            // IMPORTANTE: Limpa a seleção da tabela para os botões voltarem a controlar o campo de texto
-            tabelaProdutos.clearSelection();
-
-            atualizarTabela();
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
-        }
-    }
-
-    private void atualizarEstoque(String tipo) {
-        int linhaSelecionada = tabelaProdutos.getSelectedRow();
-        if (linhaSelecionada == -1) return;
-
-        int idProduto = (int) tabelaProdutos.getValueAt(linhaSelecionada, 0);
-        String nomeProd = (String) tabelaProdutos.getValueAt(linhaSelecionada, 1);
-        int qtdAtual = (int) tabelaProdutos.getValueAt(linhaSelecionada, 3);
-
-        String input = JOptionPane.showInputDialog(this, "Digite a quantidade para " + tipo + ":");
         if (input == null || input.isEmpty()) return;
 
         try {
             int qtdMovimentada = Integer.parseInt(input);
             if (qtdMovimentada <= 0) {
-                JOptionPane.showMessageDialog(this, "A quantidade deve ser maior que zero!");
+                JOptionPane.showMessageDialog(this, "A quantidade deve ser maior que zero.");
                 return;
             }
 
-            int novaQtd = 0;
+            int novoSaldo = qtdAtual;
             if (tipo.equals("ENTRADA")) {
-                novaQtd = qtdAtual + qtdMovimentada;
-            } else if (tipo.equals("SAIDA")) {
+                novoSaldo += qtdMovimentada;
+            } else {
                 if (qtdMovimentada > qtdAtual) {
-                    JOptionPane.showMessageDialog(this, "Estoque insuficiente! Saldo atual: " + qtdAtual);
+                    JOptionPane.showMessageDialog(this, "Erro: Estoque insuficiente! Você tem " + qtdAtual);
                     return;
                 }
-                novaQtd = qtdAtual - qtdMovimentada;
+                novoSaldo -= qtdMovimentada;
             }
 
-            Produto p = produtoDAO.buscarPorId(idProduto);
-            p.setQuantidade(novaQtd);
-            produtoDAO.atualizar(p);
+            // Busca objeto completo para atualizar
+            List<Produto> lista = produtoDAO.findAll();
+            for (Produto p : lista) {
+                if (p.getId() == idProduto) {
+                    p.setQuantity(novoSaldo);
+                    produtoDAO.update(p);
 
-            historicoDAO.registrarMovimento(tipo, nomeProd, qtdMovimentada);
+                    try {
+                        historicoDAO.add(p, tipo, qtdMovimentada);
+                    } catch (Exception ex) {
+                        System.out.println("Erro ao salvar histórico: " + ex.getMessage());
+                    }
+                    break;
+                }
+            }
 
             atualizarTabela();
-            JOptionPane.showMessageDialog(this, "Estoque atualizado!");
+            JOptionPane.showMessageDialog(this, "Estoque atualizado com sucesso!");
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Digite apenas números inteiros!");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
         }
     }
 
-    private void atualizarTabela() {
-        tableModel.setRowCount(0);
-        List<Produto> produtos = produtoDAO.listarTodos();
-        for (Produto p : produtos) {
-            tableModel.addRow(new Object[]{
-                    p.getId(), p.getNome(), p.getPreco(), p.getQuantidade(), p.getCategoriaId()
-            });
-        }
+    private void salvarProduto() {
+        try {
+            String nome = txtNome.getText();
+            double preco = Double.parseDouble(txtPreco.getText().replace(",", "."));
+            int qtd = Integer.parseInt(txtQtdInicial.getText());
 
-        double total = produtoDAO.calcularValorTotalEstoque();
-        lblValorTotal.setText(String.format("Patrimônio Total em Estoque: R$ %.2f   ", total));
+            // Verificação de categoria
+            if (comboCategoria.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(this, "Selecione uma categoria!");
+                return;
+            }
+            Categoria cat = (Categoria) comboCategoria.getSelectedItem();
+
+            Produto p = new Produto();
+            p.setName(nome);
+            p.setPrice(preco);
+            p.setQuantity(qtd);
+            p.setCategoryId(cat.getId());
+
+            produtoDAO.insert(p);
+
+            try {
+                historicoDAO.add(p, "ENTRADA", qtd);
+            } catch (Exception ignored) {}
+
+            JOptionPane.showMessageDialog(this, "Produto salvo!");
+            txtNome.setText("");
+            txtPreco.setText("");
+            txtQtdInicial.setText("");
+            atualizarTabela();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar: Verifique os campos numéricos e se todos estão preenchidos.");
+        }
+    }
+
+    public void atualizarTabela() {
+        tableModel.setRowCount(0);
+        List<Produto> lista = produtoDAO.findAll();
+        for (Produto p : lista) {
+            String nomeCategoria = "Desconhecida";
+            for(int i=0; i<comboCategoria.getItemCount(); i++){
+                Categoria c = comboCategoria.getItemAt(i);
+                if(c.getId() == p.getCategoryId()){
+                    nomeCategoria = c.getName();
+                    break;
+                }
+            }
+            tableModel.addRow(new Object[]{p.getId(), p.getName(), p.getPrice(), p.getQuantity(), nomeCategoria});
+        }
+    }
+
+    public void carregarCategorias() {
+        comboCategoria.removeAllItems();
+        List<Categoria> categorias = categoriaDAO.findAll();
+        for (Categoria c : categorias) {
+            comboCategoria.addItem(c);
+        }
     }
 }

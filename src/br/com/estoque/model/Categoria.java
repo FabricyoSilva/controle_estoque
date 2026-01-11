@@ -1,29 +1,21 @@
 package br.com.estoque.model;
 
 public class Categoria {
-    // Atributos privados (Encapsulamento)
     private int id;
-    private String nome;
-    private String descricao;
+    private String name;
+    private String description;
 
-    // Construtor vazio (obrigatório para algumas bibliotecas e boas práticas)
-    public Categoria() {
-    }
+    // Construtor vazio (obrigatório)
+    public Categoria() {}
 
-    // Construtor para criar nova categoria (sem ID, pois o banco gera automático)
-    public Categoria(String nome, String descricao) {
-        this.nome = nome;
-        this.descricao = descricao;
-    }
-
-    // Construtor completo (para quando buscamos do banco)
-    public Categoria(int id, String nome, String descricao) {
+    // Construtor completo
+    public Categoria(int id, String name, String description) {
         this.id = id;
-        this.nome = nome;
-        this.descricao = descricao;
+        this.name = name;
+        this.description = description;
     }
 
-    // Getters e Setters
+    // --- GETTERS E SETTERS EM INGLÊS (Para corrigir os erros vermelhos) ---
     public int getId() {
         return id;
     }
@@ -32,25 +24,25 @@ public class Categoria {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    // Método toString() para facilitar a exibição em listas (Combobox) depois
+    // Importante para o ComboBox funcionar
     @Override
     public String toString() {
-        return this.nome;
+        return this.name;
     }
 }

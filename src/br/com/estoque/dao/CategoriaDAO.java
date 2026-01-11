@@ -2,74 +2,56 @@ package br.com.estoque.dao;
 
 import br.com.estoque.model.Categoria;
 import br.com.estoque.util.ConnectionFactory;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoriaDAO implements GenericDAO<Categoria> {
+public class CategoriaDAO {
 
-    @Override
-    public void salvar(Categoria categoria) {
+    // 1. INSERT (Salvar)
+    public void insert(Categoria categoria) {
         String sql = "INSERT INTO categoria (nome, descricao) VALUES (?, ?)";
-
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, categoria.getNome());
-            stmt.setString(2, categoria.getDescricao());
-
+            stmt.setString(1, categoria.getName());
+            stmt.setString(2, categoria.getDescription());
             stmt.executeUpdate();
-            System.out.println("Categoria salva com sucesso!");
-
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao salvar categoria: " + e.getMessage());
         }
     }
 
-    @Override
-    public void atualizar(Categoria categoria) {
-        String sql = "UPDATE categoria SET nome = ?, descricao = ? WHERE id = ?";
+    // 2. DELETE (Excluir com Verificação de Segurança 🛡️)
+    public void delete(int id) {
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
-        try (Connection conn = ConnectionFactory.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // PASSO 1: Verificar se existem produtos vinculados
+            String sqlCheck = "SELECT count(*) FROM produto WHERE categoria_id = ?";
+            try (PreparedStatement stmtCheck = conn.prepareStatement(sqlCheck)) {
+                stmtCheck.setInt(1, id);
+                ResultSet rs = stmtCheck.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // SE TIVER PRODUTO, LANÇA O ERRO AQUI!
+                    throw new RuntimeException("Não é possível excluir: Existem produtos usando esta categoria!");
+                }
+            }
 
-            stmt.setString(1, categoria.getNome());
-            stmt.setString(2, categoria.getDescricao());
-            stmt.setInt(3, categoria.getId());
-
-            stmt.executeUpdate();
-            System.out.println("Categoria atualizada com sucesso!");
+            // PASSO 2: Se passou pelo teste, executa a exclusão
+            String sqlDelete = "DELETE FROM categoria WHERE id = ?";
+            try (PreparedStatement stmtDelete = conn.prepareStatement(sqlDelete)) {
+                stmtDelete.setInt(1, id);
+                stmtDelete.executeUpdate();
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar categoria: " + e.getMessage());
+            throw new RuntimeException("Erro de banco de dados: " + e.getMessage());
         }
     }
 
-    @Override
-    public void deletar(int id) {
-        String sql = "DELETE FROM categoria WHERE id = ?";
-
-        try (Connection conn = ConnectionFactory.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-            System.out.println("Categoria excluída com sucesso!");
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao deletar categoria: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public List<Categoria> listarTodos() {
+    // 3. FIND ALL (Listar Todos)
+    public List<Categoria> findAll() {
         String sql = "SELECT * FROM categoria";
-        List<Categoria> categorias = new ArrayList<>();
-
+        List<Categoria> lista = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -77,38 +59,13 @@ public class CategoriaDAO implements GenericDAO<Categoria> {
             while (rs.next()) {
                 Categoria c = new Categoria();
                 c.setId(rs.getInt("id"));
-                c.setNome(rs.getString("nome"));
-                c.setDescricao(rs.getString("descricao"));
-                categorias.add(c);
+                c.setName(rs.getString("nome"));
+                c.setDescription(rs.getString("descricao"));
+                lista.add(c);
             }
-
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar categorias: " + e.getMessage());
         }
-        return categorias;
-    }
-
-    @Override
-    public Categoria buscarPorId(int id) {
-        String sql = "SELECT * FROM categoria WHERE id = ?";
-        Categoria categoria = null;
-
-        try (Connection conn = ConnectionFactory.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                categoria = new Categoria();
-                categoria.setId(rs.getInt("id"));
-                categoria.setNome(rs.getString("nome"));
-                categoria.setDescricao(rs.getString("descricao"));
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar categoria por ID: " + e.getMessage());
-        }
-        return categoria;
+        return lista;
     }
 }

@@ -1,74 +1,38 @@
 package br.com.estoque.model;
 
 public class Produto {
-    // Atributos privados
     private int id;
-    private String nome;
-    private double preco;
-    private int quantidade;
-
-    // Foreign Key (Chave Estrangeira) para ligar com a Categoria
-    private int categoriaId;
+    private String name;
+    private double price;
+    private int quantity;
+    private int categoryId;
 
     // Construtor vazio
-    public Produto() {
-    }
-
-    // Construtor para cadastro novo
-    public Produto(String nome, double preco, int quantidade, int categoriaId) {
-        this.nome = nome;
-        this.preco = preco;
-        this.quantidade = quantidade;
-        this.categoriaId = categoriaId;
-    }
+    public Produto() {}
 
     // Construtor completo
-    public Produto(int id, String nome, double preco, int quantidade, int categoriaId) {
+    public Produto(int id, String name, double price, int quantity, int categoryId) {
         this.id = id;
-        this.nome = nome;
-        this.preco = preco;
-        this.quantidade = quantidade;
-        this.categoriaId = categoriaId;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.categoryId = categoryId;
     }
 
-    // Getters e Setters
-    public int getId() {
-        return id;
-    }
+    // --- GETTERS E SETTERS CORRETOS ---
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getNome() {
-        return nome;
-    }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    // Este era o principal causador do erro:
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    public double getPreco() {
-        return preco;
-    }
-
-    public void setPreco(double preco) {
-        this.preco = preco;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public int getCategoriaId() {
-        return categoriaId;
-    }
-
-    public void setCategoriaId(int categoriaId) {
-        this.categoriaId = categoriaId;
-    }
+    public int getCategoryId() { return categoryId; }
+    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
 }
