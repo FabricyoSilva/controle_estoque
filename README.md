@@ -55,14 +55,19 @@ O projeto foi construído utilizando **Java (Swing)** e banco de dados embarcado
 
 Você pode rodar o sistema de duas formas: usando o executável pronto ou abrindo o código na IDE.
 
-### Opção 1: Usando o Executável (Artefato Executável)(Recomendado)
-A forma mais rápida de testar o sistema, sem precisar configurar IDEs.
+### Opção 1: Usando o Executável (Recomendado)
+A forma mais rápida de testar o sistema.
 
-1.  **Baixe** a versão final compilada: [Download v1.0 (Executável)](https://github.com/FabricyoSilva/controle_estoque/releases/tag/v1.0)
-2.  **Extraia** todo o conteúdo do arquivo `.zip` para uma pasta no seu computador.
-3.  **Execute** o arquivo `controle_estoque.jar` (dê dois cliques).
-    * *Nota:* É necessário ter o Java (JRE/JDK) instalado no computador.
-    * *Importante:* Mantenha os arquivos `.jar` das bibliotecas na mesma pasta do executável para que ele funcione.
+1.  **Baixe** a versão final: [Download v1.0 (Executável)](https://github.com/FabricyoSilva/controle_estoque/releases/tag/v1.0)
+2.  **Extraia** todo o conteúdo do arquivo `.zip` para uma pasta.
+3.  **Execute** o sistema conforme seu Sistema Operacional:
+    * 🪟 **Windows:** Dê dois cliques no arquivo `iniciar.bat`.
+    * 🐧 **Linux / Mac:** Abra o terminal na pasta e digite:
+        ```bash
+        java -jar controle_estoque.jar
+        ```
+
+> **Nota:** É necessário ter o Java instalado. O arquivo `.bat` garante a execução correta das bibliotecas.
 
 ---
 
