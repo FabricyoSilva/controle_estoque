@@ -2,41 +2,46 @@
 
 Este projeto é uma solução **Full Desktop Application**.
 
-O software transcende o conceito básico de cadastro, funcionando como um **ERP simplificado** que integra gestão de mercadorias, controle financeiro em tempo real, categorização dinâmica de produtos e auditoria completa de movimentações. O foco foi simular um ambiente corporativo real, com regras de negócio rígidas que garantem a integridade dos dados e do patrimônio.
+O software transcende o conceito básico de cadastro, funcionando como um **ERP simplificado** que integra gestão de mercadorias, categorização dinâmica de produtos e auditoria completa de movimentações. O foco foi simular um ambiente corporativo real, com regras de negócio rígidas que garantem a integridade dos dados e do patrimônio.
 
 ---
 ## 👤 Autor
 
-[Fabricyo Silva] - Desenvolvedor Full Stack (Backend, Frontend e Banco de Dados) - ADS2
+[Fabricyo Silva Veras dos Santos] - ADS2
 
 ---
 
-## 🚀 Funcionalidades e Regras de Negócio (Diferenciais)
+🚀 Funcionalidades e Regras de Negócio (Diferenciais)
+O sistema foi arquitetado para garantir a consistência dos dados e evitar erros operacionais, atendendo a requisitos não triviais de um sistema comercial:
 
-O sistema foi arquitetado para resolver quatro pilares fundamentais da gestão empresarial:
+1. 🛡️ Integridade Referencial (Proteção de Dados)
+Implementação de regras de banco de dados diretamente na aplicação Java.
 
-### 1. 📊 Gestão Financeira Integrada (KPIs)
+Regra de Negócio: O sistema impede a exclusão acidental de Categorias que possuem produtos vinculados.
 
-- **Funcionalidade:** Cálculo automático e em tempo real do valor total imobilizado em estoque (Preço x Quantidade).
-- **Impacto:** Permite ao gestor saber instantaneamente quanto capital está investido em mercadorias, auxiliando na tomada de decisão financeira.
+Técnica: Antes de efetivar a exclusão, o sistema realiza uma verificação cruzada (Foreign Key Check) no banco. Se existirem produtos dependentes daquela categoria, a operação é bloqueada e o usuário é alertado, evitando a criação de registros "órfãos".
 
-### 2. 🗂️ Gestão Dinâmica de Categorias
-O sistema implementa um relacionamento **1:N (Um-para-Muitos)** flexível e reativo.
-- **Funcionalidade:** O usuário pode criar novas categorias (ex: "Eletrônicos", "Perecíveis") a qualquer momento.
-- **Reatividade (Observer):** Ao cadastrar uma nova categoria, todas as interfaces de cadastro de produtos são atualizadas instantaneamente para exibir a nova opção, sem necessidade de reiniciar o sistema.
+2. ⚖️ Controle Logístico de Estoque (Entrada/Saída)
+Substituição da edição livre por operações controladas.
 
-### 3. ⚖️ Controle de Fluxo (Entrada/Saída) com Travas de Segurança
-Implementação de regras de negócio para evitar erros operacionais comuns.
-- **Regra de Negócio:** O sistema bloqueia a edição manual arbitrária de quantidades. O usuário é forçado a realizar operações formais de **"Compra/Entrada"** ou **"Venda/Saída"**.
-- **Validação de Saldo:** É matematicamente impossível realizar uma saída superior ao saldo atual (Estoque Negativo Bloqueado), garantindo consistência contábil.
+Funcionalidade: Diferenciação clara entre "Cadastro Inicial" (definição do produto) e "Movimentação" (dia a dia).
 
-### 4. 📝 Auditoria e Rastreabilidade (Histórico de Movimentações)
-Segurança e transparência para o negócio.
-- **Funcionalidade:** Cada operação realizada no sistema (desde o cadastro inicial até pequenos ajustes de estoque) gera um registro imutável (Log).
-- **Detalhes:** O histórico grava a data exata, o tipo de operação, o produto afetado e a quantidade movimentada, permitindo rastrear "quem fez o quê".
+Interface Intuitiva: Botões de ação rápida (Verde para Entrada, Vermelho para Saída) facilitam a operação e evitam confusão visual.
 
-### 5. 🚨 Gestão Visual de Risco
-- **Funcionalidade:** Produtos com estoque crítico (abaixo de 5 unidades) são destacados visualmente em **vermelho** na listagem, servindo como um alerta passivo para reposição imediata.
+Validação de Saldo: Implementação de lógica matemática que bloqueia saídas superiores ao saldo atual (Estoque Negativo Bloqueado), garantindo a consistência física do inventário.
+
+3. 📝 Auditoria e Rastreabilidade (Log de Eventos)
+Segurança e histórico para o negócio.
+
+Funcionalidade: O sistema gera automaticamente um registro imutável no banco de dados para cada movimentação de estoque.
+
+Detalhes: O log armazena o Timestamp (Data/Hora exata), o Tipo de Movimentação (Entrada/Saída), o Produto e a Quantidade, permitindo auditoria completa de quem alterou o estoque e quando.
+
+4. 🗂️ Gestão Dinâmica de Categorias (Observer Pattern)
+O sistema implementa um relacionamento 1:N (Um-para-Muitos) reativo.
+
+Reatividade: A interface utiliza o padrão de projeto Observer (via Listeners). Ao cadastrar ou excluir uma categoria em uma aba, a lista de seleção na aba de "Produtos" é atualizada instantaneamente, sem necessidade de recarregar a aplicação.
+
 
 ---
 
@@ -117,18 +122,17 @@ src
 
 ## 📸 Screenshots
 
-Tela Principal: Dashboard Financeiro e Alerta de Estoque Baixo
+1. Tela Principal (Gerenciar Produtos)
 
-<img width="780" height="588" alt="Captura de tela 2026-01-10 165940" src="https://github.com/user-attachments/assets/fd13e5d1-14c9-41b7-a1ac-525795742208" />
+<img width="785" height="594" alt="Captura de tela 2026-01-11 183934" src="https://github.com/user-attachments/assets/b80ea4cb-37b5-494c-a70c-e40131dcbc77" />
 
-Cadastro e Gerenciamento de Categorias
+2. Tela de Categorias (Gerenciar Categorias)
 
-<img width="782" height="591" alt="Captura de tela 2026-01-10 165958" src="https://github.com/user-attachments/assets/f7f4bbd9-7b5e-42da-b551-ff8b98b23363" />
+<img width="789" height="592" alt="Captura de tela 2026-01-11 183938" src="https://github.com/user-attachments/assets/e88c618b-3c82-45a3-ab82-ebce6326b6dd" />
 
-Aba de Histórico de Movimentações
+3. Tela de Histórico
 
-<img width="781" height="590" alt="Captura de tela 2026-01-10 170003" src="https://github.com/user-attachments/assets/37ab8201-314a-4b7a-8a11-40de58f58ab4" />
-
+<img width="784" height="594" alt="Captura de tela 2026-01-11 183942" src="https://github.com/user-attachments/assets/7abcf3ff-884c-4556-9075-f7d4dda29f4b" />
 
 ---
 
