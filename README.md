@@ -2,7 +2,7 @@
 
 Este projeto é uma solução **Full Desktop Application**.
 
-O software transcende o conceito básico de cadastro, funcionando como um **ERP simplificado** que integra gestão de mercadorias, controle financeiro em tempo real, categorização dinâmica de produtos e auditoria completa de movimentações. O foco foi simular um ambiente corporativo real, com regras de negócio rígidas que garantem a integridade dos dados e do patrimônio.
+O software transcende o conceito básico de cadastro, funcionando como um **ERP simplificado** que integra gestão de mercadorias, categorização dinâmica de produtos e auditoria completa de movimentações. O foco foi simular um ambiente corporativo real, com regras de negócio rígidas que garantem a integridade dos dados e do patrimônio.
 
 ---
 ## 👤 Autor
@@ -117,18 +117,17 @@ src
 
 ## 📸 Screenshots
 
-Tela Principal: Dashboard Financeiro e Alerta de Estoque Baixo
+1. Tela Principal (Gerenciar Produtos)
 
-<img width="780" height="588" alt="Captura de tela 2026-01-10 165940" src="https://github.com/user-attachments/assets/fd13e5d1-14c9-41b7-a1ac-525795742208" />
+<img width="785" height="594" alt="Captura de tela 2026-01-11 183934" src="https://github.com/user-attachments/assets/b80ea4cb-37b5-494c-a70c-e40131dcbc77" />
 
-Cadastro e Gerenciamento de Categorias
+2. Tela de Categorias (Gerenciar Categorias)
 
-<img width="782" height="591" alt="Captura de tela 2026-01-10 165958" src="https://github.com/user-attachments/assets/f7f4bbd9-7b5e-42da-b551-ff8b98b23363" />
+<img width="789" height="592" alt="Captura de tela 2026-01-11 183938" src="https://github.com/user-attachments/assets/e88c618b-3c82-45a3-ab82-ebce6326b6dd" />
 
-Aba de Histórico de Movimentações
+3. Tela de Histórico
 
-<img width="781" height="590" alt="Captura de tela 2026-01-10 170003" src="https://github.com/user-attachments/assets/37ab8201-314a-4b7a-8a11-40de58f58ab4" />
-
+<img width="784" height="594" alt="Captura de tela 2026-01-11 183942" src="https://github.com/user-attachments/assets/7abcf3ff-884c-4556-9075-f7d4dda29f4b" />
 
 ---
 
