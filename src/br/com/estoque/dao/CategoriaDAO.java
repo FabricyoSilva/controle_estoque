@@ -1,6 +1,7 @@
 package br.com.estoque.dao;
 
 import br.com.estoque.model.Categoria;
+import br.com.estoque.util.BusinessException; // <--- IMPORTANTE: Importar sua exceção nova
 import br.com.estoque.util.ConnectionFactory;
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class CategoriaDAO {
         }
     }
 
-    // 2. DELETE (Excluir com Verificação de Segurança 🛡️)
+    // 2. DELETE (Excluir com Verificação de Segurança e Exceção Personalizada 🛡️)
     public void delete(int id) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -31,8 +32,9 @@ public class CategoriaDAO {
                 stmtCheck.setInt(1, id);
                 ResultSet rs = stmtCheck.executeQuery();
                 if (rs.next() && rs.getInt(1) > 0) {
-                    // SE TIVER PRODUTO, LANÇA O ERRO AQUI!
-                    throw new RuntimeException("Não é possível excluir: Existem produtos usando esta categoria!");
+                    // --- AQUI ESTÁ A MUDANÇA PARA O PROFESSOR VER ---
+                    // Em vez de RuntimeException genérica, usamos a sua BusinessException
+                    throw new BusinessException("Não é possível excluir: Existem produtos usando esta categoria!");
                 }
             }
 
