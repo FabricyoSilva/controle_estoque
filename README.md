@@ -1,4 +1,4 @@
-# 📦 Sistema Integrado de Controle de Estoque e Financeiro 
+# 📦 Sistema Integrado de Controle de Estoque
 
 Este projeto é uma solução **Full Desktop Application**.
 
