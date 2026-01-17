@@ -5,11 +5,6 @@ Este projeto é uma solução **Full Desktop Application**.
 O software transcende o conceito básico de cadastro, funcionando como um **ERP simplificado** que integra gestão de mercadorias, categorização dinâmica de produtos e auditoria completa de movimentações. O foco foi simular um ambiente corporativo real, com regras de negócio rígidas que garantem a integridade dos dados e do patrimônio.
 
 ---
-## 👤 Autor
-
-[Fabricyo Silva Veras dos Santos] - ADS2
-
----
 
 🚀 Funcionalidades e Regras de Negócio (Diferenciais)
 O sistema foi arquitetado para garantir a consistência dos dados e evitar erros operacionais, atendendo a requisitos não triviais de um sistema comercial:
